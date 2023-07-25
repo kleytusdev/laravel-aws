@@ -3,8 +3,9 @@ import axios from "axios";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
-export default function Photo({ auth }) {
+export default function Photo({ auth, photos }) {
   const [selectedFile, setSelectedFile] = useState(null);
+  console.log(photos)
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -23,6 +24,20 @@ export default function Photo({ auth }) {
         // Aquí puedes manejar errores de la petición si ocurren
       });
   };
+
+  const handleDestroy = (id) => {
+    axios
+      .delete(route("photo.destroy", { id }))
+      .then((response) => {
+        // Aquí puedes manejar la respuesta del backend si es necesario
+        // Por ejemplo, puedes actualizar la lista de fotos en el estado del componente
+        // para reflejar la eliminación de la foto eliminada.
+      })
+      .catch((error) => {
+        // Aquí puedes manejar errores de la petición si ocurren
+      });
+  };
+
 
   return (
     <AuthenticatedLayout
@@ -44,6 +59,14 @@ export default function Photo({ auth }) {
               <input type="file" onChange={handleFileChange} />
             </div>
             <button onClick={handleUpload}>Subir</button>
+          </div>
+          <div>
+            {photos.map((photo) => (
+              <div key={photo.id}>
+                <img className="w-[20vw] h-[20vw]" src={`storage/${photo.photo_1}`} alt={`Photo ${photo.id}`} />
+                <button onClick={() => handleDestroy(photo.id)}>Eliminar</button>
+              </div>
+            ))}
           </div>
         </div>
       </div>
